@@ -44,6 +44,13 @@ define(function(require) {
 
       this.navigation = new Navigation({ playerModel: this.playerModel });
 
+      // Enable navigation at the start of each round to account for the case
+      // where the player was in possession of a pizza (and therefore unable to
+      // navigate) at the end of the previous round.
+      this.listenTo(this.gameState, 'roundStart', function() {
+        this.navigation.enable();
+      });
+
       this.listenTo(this.pizzas, 'localOwnerTake', function(pizza) {
         this.workstation.setPizza(pizza);
         this.navigation.disable();
