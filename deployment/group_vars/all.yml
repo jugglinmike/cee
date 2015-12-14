@@ -1,0 +1,6 @@
+---
+app_port: 8000
+app_user: www-data
+app_group: www-data
+log_file: /var/log/cee-interactives.log
+git_repo: git@github.com:councilforeconed/interactive-activities.git
