@@ -38,3 +38,9 @@
     regexp="^ChallengeResponseAuthentication"
     line="ChallengeResponseAuthentication no"
   notify: restart sshd
+
+- name: install unattended upgrades
+  apt: name=unattended-upgrades state=present
+
+- name: configure unattended upgrades
+  copy: src=10periodic dest=/etc/apt/apt.conf.d/
