@@ -2,7 +2,7 @@
 - hosts: all
   gather_facts: false
   sudo: yes
-  remote_user: "{{ admin_user }}"
+  remote_user: "{{ deploy_user }}"
   roles:
     - webserver
     - system

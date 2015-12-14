@@ -3,18 +3,35 @@
   gather_facts: false
   remote_user: root
   tasks:
-    - name: Create admin user
-      user: name={{ admin_user }}
+    - name: Create "deployer" user
+      user: name={{ deploy_user }}
 
-    - name: Disable password requirement for the webhook user to use sudo
+    - name: Disable password requirement for the "deployer" user to use sudo
       lineinfile:
         dest=/etc/sudoers
         state=present
-        line="{{ admin_user }} ALL=(ALL) NOPASSWD:ALL"
+        line="{{ deploy_user }} ALL=(ALL) NOPASSWD:ALL"
         validate="visudo -cf %s"
+
     - name: Whitelist users for SSH access
       lineinfile:
         dest=/etc/ssh/sshd_config
         state=present
         regexp="^AllowUsers\s"
-        line="AllowUsers {{ admin_user }}"
+        line="AllowUsers {{ deploy_user }}"
+
+    - name: disallow password authentication
+      lineinfile:
+        dest=/etc/ssh/sshd_config
+        state=present
+        regexp="^PasswordAuthentication"
+        line="PasswordAuthentication no"
+      notify: restart sshd
+
+    - name: disallow challenge response authentication
+      lineinfile:
+        dest=/etc/ssh/sshd_config
+        state=present
+        regexp="^ChallengeResponseAuthentication"
+        line="ChallengeResponseAuthentication no"
+      notify: restart sshd

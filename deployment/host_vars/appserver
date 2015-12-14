@@ -1,5 +1,5 @@
 ---
-admin_user: cee
+deploy_user: cee
 env: production
 hostname: cee-interactives
 app_base_path: /mnt/cee-interactives

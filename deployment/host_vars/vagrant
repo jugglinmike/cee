@@ -1,5 +1,5 @@
 ---
-admin_user: vagrant
+deploy_user: vagrant
 env: development
 hostname: interactives-vagrant
 app_base_path: /vagrant
