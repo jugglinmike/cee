@@ -1,0 +1,3 @@
+---
+- name: Reset allowed SSH keys
+  copy: src=known_hosts dest="/home/{{ deploy_user }}/.ssh/"
