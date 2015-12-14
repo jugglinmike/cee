@@ -1,4 +1,11 @@
 ---
+- name: update the apt cache
+  apt: update_cache=yes cache_valid_time=3600
+
+- name: upgrade all packages safely
+  apt: upgrade=safe
+  when: env != "development"
+
 - name: Create "deployer" user
   user: name={{ deploy_user }}
 

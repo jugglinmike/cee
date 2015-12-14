@@ -1,7 +1,4 @@
 ---
-- name: apt cache is updated
-  apt: update_cache=yes
-
 - name: hostname is set
   hostname: name={{hostname}}
 
