@@ -11,23 +11,38 @@
 - name: Interactive Activities daemon is configured
   template: src=upstart.conf dest=/etc/init/interactive-activities.conf backup=no
 
+- name: create a staging directory
+  command: mktemp -t cee-interactives-XXXXXX
+  register: dynamic_staging_path
+  when: env != 'development'
+
+- set_fact:
+    app_staging_path: "{{app_base_path}}"
+  when: env == 'development'
+
+- set_fact:
+    app_staging_path: "{{dynamic_staging_path.stdout }}"
+  when: env != 'development'
+
 - name: code is synchronized via git to temp directory
-  git: dest={{app_base_path}}.tmp repo={{git_repo}} version={{commit}}
+  git: dest={{app_staging_path}} repo={{git_repo}} version={{commit}}
   when: env != 'development'
 
 - name: npm install has been run
-  npm: path={{app_base_path}}.tmp
+  npm: path={{app_staging_path}}
 
 - name: production version of the application has been built
   command: npm run build
   args:
-    chdir: "{{ app_base_path }}.tmp"
+    chdir: "{{ app_staging_path }}"
 
 - name: current production build is removed
   command: rm -rf {{app_base_path}}
+  when: env != 'development'
 
 - name: new production build is in place
-  command: mv {{app_base_path}}.tmp {{app_base_path}}
+  command: mv {{app_staging_path}} {{app_base_path}}
+  when: env != 'development'
 
 - name: the service is restarted
   service: name=interactive-activities state=restarted
