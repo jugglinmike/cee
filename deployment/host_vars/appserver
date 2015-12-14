@@ -1,0 +1,7 @@
+---
+admin_user: cee
+env: production
+hostname: cee-interactives
+app_base_path: /mnt/cee-interactives
+app_fqdn: interactives.councilforeconed.org
+npm_run_script: start

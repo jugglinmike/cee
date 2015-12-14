@@ -1,0 +1,26 @@
+---
+- hosts: all
+  gather_facts: false
+  remote_user: root
+  vars_prompt:
+    - name: "admin_passwd"
+      prompt: "Sudo password for user '{{ admin_user }}'"
+      private: yes
+      encrypt: "sha512_crypt"
+      confirm: yes
+      salt_size: 7
+  tasks:
+    - name: Create admin user
+      user: name={{ admin_user }} passwd={{ admin_passwd }}
+    - name: Disable password requirement for the webhook user to use sudo
+      lineinfile:
+        dest=/etc/sudoers
+        state=present
+        line="{{ admin_user }} ALL=(ALL) NOPASSWD:ALL"
+        validate="visudo -cf %s"
+    - name: Whitelist users for SSH access
+      lineinfile:
+        dest=/etc/ssh/sshd_config
+        state=present
+        regexp="^AllowUsers\s"
+        line="AllowUsers {{ admin_user }}"

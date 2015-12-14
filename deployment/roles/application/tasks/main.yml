@@ -35,6 +35,7 @@
   command: npm run build
   args:
     chdir: "{{ app_staging_path }}"
+  when: env != 'development'
 
 - name: current production build is removed
   command: rm -rf {{app_base_path}}

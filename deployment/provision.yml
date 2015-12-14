@@ -1,10 +1,10 @@
 ---
-# provision machine and deploy code
-
 - hosts: all
   gather_facts: false
   sudo: yes
+  remote_user: "{{ admin_user }}"
   roles:
-    #- webserver
+    - webserver
     - system
+    #- webhook
     - application
