@@ -1,2 +1,1 @@
-[appservers]
-107.170.20.232
+appserver ansible_ssh_host=107.170.20.232
