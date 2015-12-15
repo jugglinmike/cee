@@ -25,7 +25,7 @@
   when: env != 'development'
 
 - name: code is synchronized via git to temp directory
-  git: dest={{app_staging_path}} repo={{git_repo}} version={{commit}}
+  git: dest={{app_staging_path}} repo={{git_repo}} version=master
   when: env != 'development'
 
 - name: npm install has been run
