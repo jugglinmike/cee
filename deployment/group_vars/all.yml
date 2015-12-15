@@ -3,4 +3,8 @@ app_port: 8000
 app_user: www-data
 app_group: www-data
 app_log_file: /var/log/cee-interactives.log
+
+webhook_port: 1337
+webhook_log_file: /var/log/webhook.log
+
 git_repo: git@github.com:councilforeconed/interactive-activities.git

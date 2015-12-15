@@ -1,0 +1,35 @@
+---
+- name: Create webhook user
+  user: name=webhook
+
+- name: Disable password requirement for the webhook user to use sudo
+  lineinfile:
+    dest=/etc/sudoers
+    state=present
+    line='webhook ALL=(ALL) NOPASSWD:ALL'
+    validate="visudo -cf %s"
+
+- name: Install Ansible dependencies
+  apt: name={{item}} state=present
+  with_items:
+    - python-dev
+    - python-pip
+
+- name: Install Ansble
+  pip: name=ansible state=present
+
+- name: Webhook log file is present
+  file: path={{ webhook_log_file }} state=touch owner=webhook
+
+- name: Webhook server daemon is configured
+  template: src=upstart.conf dest=/etc/init/webhook.conf backup=no
+
+- name: webhook service is restarted
+  service: name=webhook state=restarted
+
+# Create user: "webhook"
+  # disallow SSH login
+  # enable password-less sudo
+# apt-get python-pip python-dev
+# pip install ansible
+# create upstart script
