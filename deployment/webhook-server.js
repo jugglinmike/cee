@@ -5,42 +5,27 @@ var http = require('http');
 var spawn = require('child_process').spawn;
 var port = process.env.NODE_PORT || 1337;
 
-(function() {
-  function unix(n, args) {
-    var cmd = n;
-    var c;
-
-    if (!args) {
-      args = [];
-    } else {
-      cmd += ' ' + args.join(' ');
-    }
-
-    c = spawn(n, args, { detached: true, cwd: __dirname, env: process.env });
-    c.stdout.on('data', function(buffer) {
-      console.log(cmd + ':', String(buffer));
-    });
-    c.stderr.on('data', function(buffer) {
-      console.log(cmd + ' - ERROR:', String(buffer));
-    });
-  }
-  unix('whoami');
-  unix('groups');
-  unix('pwd');
-}());
+console.log(process.env);
 
 function provision(done) {
-  process.env.USER = 'webhook';
   var child = spawn(
     'ansible-playbook',
     ['-c', 'local', '-i', 'inventory/development', 'provision.yml'],
-    { cwd: __dirname, env: process.env }
+    { cwd: __dirname, stdio: 'inherit', env: process.env }
   );
 
-  console.log('__dirname', __dirname, process.env);
-
+  child.on('error', function() {
+    console.log('there was an error');
+  });
   child.on('error', done);
+  child.on('disconnect', function(code) {
+    console.log('disconnecting');
+  });
+  child.on('exit', function(code) {
+    console.log('exiting');
+  });
   child.on('close', function(code) {
+    console.log('closing');
     if (code !== 0) {
       done(new Error('Process exited with non-zero exit code: ' + code));
       return;
@@ -129,8 +114,8 @@ http.createServer(function(req, res) {
       log('Re-provisioning complete.');
     });
 
-    stdio.stdout.on('data', function(buffer) { log(String(buffer)); });
-    stdio.stderr.on('data', function(buffer) { log(String(buffer)); });
+    //stdio.stdout.on('data', function(buffer) { log(String(buffer)); });
+    //stdio.stderr.on('data', function(buffer) { log(String(buffer)); });
   });
 
 }).listen(port, '0.0.0.0');
